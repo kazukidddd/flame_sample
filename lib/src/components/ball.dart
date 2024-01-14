@@ -47,8 +47,10 @@ class Ball extends CircleComponent
       } else if (intersectionPoints.first.y >= game.height) {
         // ボールが表示可能なプレイエリアから出た後、ボールをゲーム世界から削除します。
         add(RemoveEffect(
-          delay: 0.35,
-        ));
+            delay: 0.35,
+            onComplete: () {
+              game.playState = PlayState.gameOver;
+            }));
       }
     } else if (other is Bat) {
       // batとの衝突時には、ボールの速度を変更します。

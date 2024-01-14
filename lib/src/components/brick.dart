@@ -31,6 +31,7 @@ class Brick extends RectangleComponent
     // Brickを消す前にこの処理が走るので最後は1になる
     // Brickが全て削除されたら、ボールとバットを削除
     if (game.world.children.query<Brick>().length == 1) {
+      game.playState = PlayState.won;
       game.world.removeAll(game.world.children.query<Ball>());
       game.world.removeAll(game.world.children.query<Bat>());
     }

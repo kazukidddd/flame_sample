@@ -10,10 +10,12 @@ import 'package:flutter/services.dart';
 import 'components/components.dart';
 import 'config.dart';
 
+enum PlayState { welcome, playing, gameOver, won }
+
 // HasCollisionDetection = 他のコンポーネントと衝突判定を行う
 // KeyboardEvents = キーボードイベントを受け取る
 class BrickBreaker extends FlameGame
-    with HasCollisionDetection, KeyboardEvents {
+    with HasCollisionDetection, KeyboardEvents, TapDetector {
   BrickBreaker()
       : super(
           camera: CameraComponent.withFixedResolution(
@@ -26,6 +28,22 @@ class BrickBreaker extends FlameGame
   double get width => size.x;
   double get height => size.y;
 
+  late PlayState _playState;
+  PlayState get playState => _playState;
+  set playState(PlayState playState) {
+    _playState = playState;
+    switch (playState) {
+      case PlayState.welcome:
+      case PlayState.gameOver:
+      case PlayState.won:
+        overlays.add(playState.name);
+      case PlayState.playing:
+        overlays.remove(PlayState.welcome.name);
+        overlays.remove(PlayState.gameOver.name);
+        overlays.remove(PlayState.won.name);
+    }
+  }
+
   @override
   FutureOr<void> onLoad() async {
     super.onLoad();
@@ -34,6 +52,21 @@ class BrickBreaker extends FlameGame
 
     // worldはゲーム画面のこと
     world.add(PlayArea());
+
+    playState = PlayState.welcome;
+
+    // デバッグモードを有効にする
+    // debugMode = true;
+  }
+
+  void startGame() {
+    if (playState == PlayState.playing) return;
+
+    world.removeAll(world.children.query<Ball>());
+    world.removeAll(world.children.query<Bat>());
+    world.removeAll(world.children.query<Brick>());
+
+    playState = PlayState.playing; // To here.
 
     // ボールを作成
     world.add(Ball(
@@ -50,9 +83,9 @@ class BrickBreaker extends FlameGame
         cornerRadius: const Radius.circular(ballRadius / 2),
         position: Vector2(width / 2, height * 0.95)));
 
-    await world.addAll([
+    world.addAll([
       for (var i = 0; i < brickColors.length; i++)
-        for (var j = 1; j <= 1; j++)
+        for (var j = 1; j <= 5; j++)
           Brick(
             Vector2(
               (i + 0.5) * brickWidth + (i + 1) * brickGutter,
@@ -61,8 +94,13 @@ class BrickBreaker extends FlameGame
             brickColors[i],
           ),
     ]);
+  }
 
-    debugMode = true;
+  @override
+  void onTap() {
+    super.onTap();
+    // タップしたらゲームを開始
+    startGame();
   }
 
   @override // キーボードイベントを受け取る
@@ -74,7 +112,13 @@ class BrickBreaker extends FlameGame
         world.children.query<Bat>().first.moveBy(-batStep);
       case LogicalKeyboardKey.arrowRight:
         world.children.query<Bat>().first.moveBy(batStep);
+      case LogicalKeyboardKey.space:
+      case LogicalKeyboardKey.enter:
+        startGame();
     }
     return KeyEventResult.handled;
   }
+
+  @override
+  Color backgroundColor() => const Color(0xfff2e8cf);
 }
