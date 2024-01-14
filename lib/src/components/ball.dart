@@ -1,5 +1,6 @@
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
+import 'package:flame/effects.dart';
 import 'package:flame_sample/src/brick_breaker.dart';
 import 'package:flame_sample/src/components/components.dart';
 import 'package:flutter/material.dart';
@@ -42,8 +43,16 @@ class Ball extends CircleComponent
       } else if (intersectionPoints.first.x >= game.width) {
         velocity.x = -velocity.x; // 画面右端に衝突したら反射
       } else if (intersectionPoints.first.y >= game.height) {
-        removeFromParent(); // 画面外に出たら削除
+        // ボールが表示可能なプレイエリアから出た後、ボールをゲーム世界から削除します。
+        add(RemoveEffect(
+          delay: 0.35,
+        ));
       }
+    } else if (other is Bat) {
+      // batとの衝突時には、ボールの速度を変更します。
+      velocity.y = -velocity.y;
+      velocity.x = velocity.x +
+          (position.x - other.position.x) / other.size.x * game.width * 0.3;
     } else {
       debugPrint('collision with $other');
     }
