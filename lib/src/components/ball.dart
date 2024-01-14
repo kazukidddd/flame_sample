@@ -14,6 +14,7 @@ class Ball extends CircleComponent
     required this.velocity,
     required super.position,
     required double radius,
+    required this.difficultyModifier,
   }) : super(
             radius: radius,
             anchor: Anchor.center,
@@ -23,6 +24,7 @@ class Ball extends CircleComponent
             children: [CircleHitbox()]); // 他のコンポーネントと衝突判定を行う
 
   final Vector2 velocity;
+  final double difficultyModifier;
 
   @override
   void update(double dt) {
@@ -53,8 +55,22 @@ class Ball extends CircleComponent
       velocity.y = -velocity.y;
       velocity.x = velocity.x +
           (position.x - other.position.x) / other.size.x * game.width * 0.3;
-    } else {
-      debugPrint('collision with $other');
+    } else if (other is Brick) {
+      // レンガとの衝突時には、ボールの速度を変更します。
+      if (position.y < other.position.y - other.size.y / 2) {
+        // ボールがレンガの上端に衝突した場合、ボールの速度を反転します。
+        velocity.y = -velocity.y;
+      } else if (position.y > other.position.y + other.size.y / 2) {
+        // ボールがレンガの下端に衝突した場合、ボールの速度を反転します。
+        velocity.y = -velocity.y;
+      } else if (position.x < other.position.x) {
+        // ボールがレンガの左端に衝突した場合、ボールの速度を反転します。
+        velocity.x = -velocity.x;
+      } else if (position.x > other.position.x) {
+        // ボールがレンガの右端に衝突した場合、ボールの速度を反転します。
+        velocity.x = -velocity.x;
+      }
+      velocity.setFrom(velocity * difficultyModifier); // To here.
     }
   }
 }

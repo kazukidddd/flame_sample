@@ -37,6 +37,7 @@ class BrickBreaker extends FlameGame
 
     // ボールを作成
     world.add(Ball(
+        difficultyModifier: difficultyModifier,
         radius: ballRadius,
         position: size / 2, // 画面の中心に配置
         // ボールの初期速度と角度をランダムに設定
@@ -48,6 +49,18 @@ class BrickBreaker extends FlameGame
         size: Vector2(batWidth, batHeight),
         cornerRadius: const Radius.circular(ballRadius / 2),
         position: Vector2(width / 2, height * 0.95)));
+
+    await world.addAll([
+      for (var i = 0; i < brickColors.length; i++)
+        for (var j = 1; j <= 1; j++)
+          Brick(
+            Vector2(
+              (i + 0.5) * brickWidth + (i + 1) * brickGutter,
+              (j + 2.0) * brickHeight + j * brickGutter,
+            ),
+            brickColors[i],
+          ),
+    ]);
 
     debugMode = true;
   }
