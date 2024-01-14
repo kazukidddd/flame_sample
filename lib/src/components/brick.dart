@@ -27,6 +27,7 @@ class Brick extends RectangleComponent
     // 衝突時のコールバック
     super.onCollisionStart(intersectionPoints, other);
     removeFromParent(); // 衝突したらレンガを削除
+    game.score.value++; // スコアを加算
 
     // Brickを消す前にこの処理が走るので最後は1になる
     // Brickが全て削除されたら、ボールとバットを削除
