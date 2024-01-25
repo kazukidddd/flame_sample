@@ -30,8 +30,8 @@ class _GameAppState extends State<GameApp> {
       theme: ThemeData(
         useMaterial3: true,
         textTheme: GoogleFonts.pressStart2pTextTheme().apply(
-          bodyColor: const Color(0xff184e77),
-          displayColor: const Color(0xff184e77),
+          bodyColor: Color.fromARGB(255, 16, 61, 95),
+          displayColor: Color.fromARGB(255, 24, 119, 67),
         ),
       ),
       home: Scaffold(
