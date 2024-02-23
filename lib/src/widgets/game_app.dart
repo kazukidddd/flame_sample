@@ -30,8 +30,8 @@ class _GameAppState extends State<GameApp> {
       theme: ThemeData(
         useMaterial3: true,
         textTheme: GoogleFonts.pressStart2pTextTheme().apply(
-          bodyColor: Color.fromARGB(255, 16, 61, 95),
-          displayColor: Color.fromARGB(255, 24, 119, 67),
+          bodyColor: const Color.fromARGB(255, 16, 61, 95),
+          displayColor: const Color.fromARGB(255, 24, 119, 67),
         ),
       ),
       home: Scaffold(
@@ -58,8 +58,8 @@ class _GameAppState extends State<GameApp> {
                         child: SizedBox(
                           width: gameWidth,
                           height: gameHeight,
-                          child: GameWidget.controlled(
-                            gameFactory: BrickBreaker.new,
+                          child: GameWidget(
+                            game: game,
                             overlayBuilderMap: {
                               // overlays.addで追加した名前をキーにして、
                               // その名前に対応するWidgetを返す
